@@ -1,7 +1,7 @@
 
 // gPrjDlg.h : header file
 //
-
+#include "DlgImage.h"
 #pragma once
 
 
@@ -11,6 +11,8 @@ class CgPrjDlg : public CDialogEx
 // Construction
 public:
 	CgPrjDlg(CWnd* pParent = NULL);	// standard constructor
+
+	CDlgImage *m_pDlgImage;
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -31,4 +33,9 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedBtnDlg();
+	afx_msg void OnDestroy();
+
+	void callFunc(int n);
 };

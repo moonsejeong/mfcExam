@@ -1,6 +1,4 @@
-﻿  stdafx.cpp
-  gPrjDlg.cpp
-  gPrj.cpp
-  Generating Code...
+﻿  DlgImage.cpp
+gPrjDlg.obj : warning LNK4258: directive '/entry:WinMainCRTStartup' not compatible with switch '/ENTRY:wWinMainCRTStartup'; ignored
   gPrj.vcxproj -> C:\Users\admin\Documents\GitHub\mfcExam\gSolution\Debug\gPrj.exe
   gPrj.vcxproj -> C:\Users\admin\Documents\GitHub\mfcExam\gSolution\Debug\gPrj.pdb (Partial PDB)

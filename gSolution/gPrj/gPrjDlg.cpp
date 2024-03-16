@@ -6,11 +6,13 @@
 #include "gPrj.h"
 #include "gPrjDlg.h"
 #include "afxdialogex.h"
+#include <iostream>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 // CAboutDlg dialog used for App About
 
@@ -65,6 +67,7 @@ BEGIN_MESSAGE_MAP(CgPrjDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BTN_DLG, &CgPrjDlg::OnBnClickedBtnDlg)
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -100,6 +103,9 @@ BOOL CgPrjDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	m_pDlgImage = new CDlgImage;
+	m_pDlgImage->Create(IDD_DLGIMAGE, this);
+	m_pDlgImage->ShowWindow(SW_SHOW);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -154,8 +160,22 @@ HCURSOR CgPrjDlg::OnQueryDragIcon()
 }
 
 
-
 void CgPrjDlg::OnBnClickedBtnDlg()
 {
-	// gittest
+	// TODO: Add your control notification handler code here
+	m_pDlgImage->ShowWindow(SW_SHOW);
+}
+
+
+void CgPrjDlg::OnDestroy()
+{
+	CDialogEx::OnDestroy();
+
+	delete m_pDlgImage;
+}
+
+void CgPrjDlg::callFunc(int n)
+{
+	int nData = n;
+	std::cout << n << std::endl;
 }
