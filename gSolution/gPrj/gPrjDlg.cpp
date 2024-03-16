@@ -66,8 +66,8 @@ BEGIN_MESSAGE_MAP(CgPrjDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BTN_DLG, &CgPrjDlg::OnBnClickedBtnDlg)
 	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDC_BTN_TEST, &CgPrjDlg::OnBnClickedBtnTest)
 END_MESSAGE_MAP()
 
 
@@ -103,9 +103,16 @@ BOOL CgPrjDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	MoveWindow(0, 0, 640, 480);
 	m_pDlgImage = new CDlgImage;
 	m_pDlgImage->Create(IDD_DLGIMAGE, this);
 	m_pDlgImage->ShowWindow(SW_SHOW);
+	m_pDlgImage->MoveWindow(0, 0, 320, 240);
+
+	m_pDlgImgResult = new CDlgImage;
+	m_pDlgImgResult->Create(IDD_DLGIMAGE, this);
+	m_pDlgImgResult->ShowWindow(SW_SHOW);
+	m_pDlgImgResult->MoveWindow(320, 0, 320, 240);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -159,23 +166,49 @@ HCURSOR CgPrjDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-void CgPrjDlg::OnBnClickedBtnDlg()
-{
-	// TODO: Add your control notification handler code here
-	m_pDlgImage->ShowWindow(SW_SHOW);
-}
-
-
 void CgPrjDlg::OnDestroy()
 {
 	CDialogEx::OnDestroy();
 
-	delete m_pDlgImage;
+	if (m_pDlgImage) delete m_pDlgImage;
+	if(m_pDlgImgResult) delete m_pDlgImgResult;
 }
 
 void CgPrjDlg::callFunc(int n)
 {
 	int nData = n;
 	std::cout << n << std::endl;
+}
+
+void CgPrjDlg::OnBnClickedBtnTest()
+{
+	// TODO: Add your control notification handler code here
+	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits();
+
+	int nWidth = m_pDlgImage->m_image.GetWidth();
+	int nHeight = m_pDlgImage->m_image.GetHeight();
+	int nPitch = m_pDlgImage->m_image.GetPitch();
+	memset(fm, 0xff, nWidth * nHeight);
+
+	for (int k = 0; k < 100; k++) {
+		int x = rand() % nWidth;
+		int y = rand() % nHeight;
+		fm[y * nPitch + x] = 0;
+	}
+
+	int nIndex = 0;
+	for (int j = 0; j < nHeight; j++) {
+		for (int i = 0; i < nWidth; i++) {
+			if (fm[j * nPitch + i] == 0) {
+				if (m_pDlgImgResult->m_nDataCount <= 100) {
+					m_pDlgImgResult->m_ptData[nIndex].x = i;
+					m_pDlgImgResult->m_ptData[nIndex].y = j;
+					m_pDlgImgResult->m_nDataCount = ++nIndex;
+				}
+			}
+		}
+	}
+
+	m_pDlgImage->Invalidate();
+	m_pDlgImgResult->Invalidate();
 }
