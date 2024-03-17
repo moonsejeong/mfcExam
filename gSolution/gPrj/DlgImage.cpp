@@ -51,7 +51,7 @@ BOOL CDlgImage::OnInitDialog()
 
 	// TODO:  Add extra initialization here
 	//AfxMessageBox(_T("ready?"));
-	MoveWindow(0, 0, 320, 240);
+	MoveWindow(0, 0, 640, 480);
 	
 	InitImage();
 
@@ -92,11 +92,12 @@ void CDlgImage::InitImage()
 	memset(fm, 0xff, nWidth * nHeight);
 }
 
+#define COLOR_RED RGB(0xff, 0, 0)
 void CDlgImage::drawData(CDC* pDC)
 {
 	CRect rect;
 	CPen pen;
-	pen.CreatePen(PS_SOLID, 5, RGB(0xff, 0, 0));
+	pen.CreatePen(PS_SOLID, 5, COLOR_RED);
 	CPen* pOldPen = pDC->SelectObject(&pen);
 	for (int i = 0; i < m_nDataCount; i++) {
 		rect.SetRect(m_ptData[i], m_ptData[i]);
