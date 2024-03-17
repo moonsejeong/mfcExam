@@ -68,6 +68,9 @@ BEGIN_MESSAGE_MAP(CgPrjDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_BTN_TEST, &CgPrjDlg::OnBnClickedBtnTest)
+	ON_BN_CLICKED(IDC_BTN_PROCESS, &CgPrjDlg::OnBnClickedBtnProcess)
+	ON_BN_CLICKED(IDC_BTN_MAKE_PATTERN, &CgPrjDlg::OnBnClickedBtnMakePattern)
+	ON_BN_CLICKED(IDC_BTN_GET_DATA, &CgPrjDlg::OnBnClickedBtnGetData)
 END_MESSAGE_MAP()
 
 
@@ -201,7 +204,7 @@ void CgPrjDlg::OnBnClickedBtnTest()
 		for (int i = 0; i < nWidth; i++) {
 			if (fm[j * nPitch + i] != 0) {
 				if (m_pDlgImgResult->m_nDataCount <= 100) {
-					std::cout << nIndex << ":" << i << "," << j << std::endl;
+					//std::cout << nIndex << ":" << i << "," << j << std::endl;
 					m_pDlgImgResult->m_ptData[nIndex].x = i;
 					m_pDlgImgResult->m_ptData[nIndex].y = j;
 					m_pDlgImgResult->m_nDataCount = ++nIndex;
@@ -212,4 +215,69 @@ void CgPrjDlg::OnBnClickedBtnTest()
 
 	m_pDlgImage->Invalidate();
 	m_pDlgImgResult->Invalidate();
+}
+
+#include "Process.h"
+#include <chrono>
+void CgPrjDlg::OnBnClickedBtnProcess()
+{
+	// TODO: Add your control notification handler code here
+	CProcess process;
+
+	auto start = std::chrono::system_clock::now();
+	int nRet = process.getStarInfo(&m_pDlgImage->m_image, 10);
+	auto end = std::chrono::system_clock::now();
+	auto millisec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+	std::cout << nRet << "\t" << millisec.count() << "ms" << std::endl;
+}
+
+
+void CgPrjDlg::OnBnClickedBtnMakePattern()
+{
+	// TODO: Add your control notification handler code here
+	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits();
+
+	int nWidth = m_pDlgImage->m_image.GetWidth();
+	int nHeight = m_pDlgImage->m_image.GetHeight();
+	int nPitch = m_pDlgImage->m_image.GetPitch();
+	memset(fm, 0, nWidth * nHeight);
+
+	CRect rect(40, 40, 200, 200);
+	for (int j = rect.top; j < rect.bottom; j++) {
+		for (int i = rect.left; i < rect.right; i++) {
+			fm[j * nPitch + i] = rand() % 0xff;
+		}
+	}
+	m_pDlgImage->Invalidate();
+}
+
+
+void CgPrjDlg::OnBnClickedBtnGetData()
+{
+	// TODO: Add your control notification handler code here
+	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits();
+
+	int nWidth = m_pDlgImage->m_image.GetWidth();
+	int nHeight = m_pDlgImage->m_image.GetHeight();
+	int nPitch = m_pDlgImage->m_image.GetPitch();
+
+	int nTh = 0x80;
+	int nSumX = 0;
+	int nSumY = 0;
+	int nCount = 0;
+	CRect rect(0, 0, nWidth, nHeight);
+	for (int j = rect.top; j < rect.bottom; j++) {
+		for (int i = rect.left; i < rect.right; i++) {
+			if (fm[j * nPitch + i] > nTh) {
+				nSumX += i;
+				nSumY += j;
+				nCount++;
+			}
+		}
+	}
+
+	double dCenterX = (double)nSumX / nCount;
+	double dCenterY = (double)nSumY / nCount;
+	std::cout << dCenterX << "\t" << dCenterX << std::endl;
 }
